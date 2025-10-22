@@ -63,13 +63,19 @@ const Editor: React.FC = () => {
     <div className="flex-1 p-8 overflow-auto flex justify-center items-start">
       <div className="bg-white w-full max-w-screen-md min-h-[1100px] rounded-lg shadow-xl p-12 text-black relative">
         <LexicalComposer initialConfig={editorConfig}>
-          <PlainTextPlugin
-            contentEditable={<ContentEditable className="editor-content-editable outline-none min-h-[calc(1100px - 96px)]" />}
-            placeholder={<div className="editor-placeholder absolute top-12 left-12 right-12 pointer-events-none text-gray-400">Enter your text here...</div>}
-            ErrorBoundary={LexicalErrorBoundary}
-          />
-          <HistoryPlugin />
-          <OnChangePlugin onChange={onChange} />
+          <div className="relative">
+            <RichTextPlugin
+              contentEditable={<ContentEditable className="editor-content-editable outline-none" />}
+              placeholder={<div className="editor-placeholder absolute top-12 left-12 right-12 pointer-events-none text-gray-400">Enter your text here...</div>}
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+            <HistoryPlugin />
+            <OnChangePlugin onChange={onChange} />
+            <LinkPlugin />
+            <ListPlugin />
+            <CheckListPlugin />
+            {/* <ClearEditorPlugin /> */}
+          </div>
         </LexicalComposer>
       </div>
     </div>
