@@ -2,15 +2,22 @@ import React, { useState } from 'react';
 
 interface ToolbarProps {
   onImportChat: (url: string) => void;
+  onInsertMathNode: ((equation: string) => void) | null;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ onImportChat }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ onImportChat, onInsertMathNode }) => {
   const [chatLink, setChatLink] = useState('');
 
   const handleImport = () => {
     if (chatLink) {
       onImportChat(chatLink);
       setChatLink('');
+    }
+  };
+
+  const handleInsertMath = () => {
+    if (onInsertMathNode) {
+      onInsertMathNode('c = \pm\sqrt{a^2 + b^2}'); // Sample equation
     }
   };
 
@@ -45,7 +52,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ onImportChat }) => {
         </svg>
         Code
       </button>
-      <button className="bg-green-500 text-black px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-green-400 flex items-center gap-1">
+      <button className="bg-green-500 text-black px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-green-400 flex items-center gap-1"
+        onClick={handleInsertMath}
+      >
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 fill-current">
           <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5.97 4.06L14.09 6l1.41 1.41L16.91 6l1.06 1.06-1.41 1.41 1.41 1.41-1.06 1.06-1.41-1.4-1.41 1.41-1.06-1.06 1.41-1.41-1.42-1.42zM7.25 7h1.5v1.5h-1.5V7zm0 2.5h1.5V11h-1.5V9.5zm2.5 2.5H8.5v-1.25H7.25V10h1.25V8.75h1.25V10h1.25v1.25H9.75V12zm-2.5 1.5h1.5v1.5h-1.5V13zm6.72 3h-7.5v-1.5h7.5V16z"/>
         </svg>
