@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDFy - PDF Converter & AI Chat Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            color: #00ff88;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            color: #999;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .nav-item.active {
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.15);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .btn:hover {
+            background: #252525;
+            border-color: #00ff88;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #00dd77;
+            box-shadow: 0 6px 16px rgba(0, 255, 136, 0.4);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 12px 6px 6px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 12px;
+        }
+
+        .user-profile:hover {
+            border-color: #00ff88;
+            background: #252525;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #000;
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            border: 2px solid #1a1a1a;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+
+        .avatar-container {
+            position: relative;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 64px;
+            background: #111;
+            border-right: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 0;
+            gap: 8px;
+        }
+
+        .sidebar-item {
+            width: 100%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .sidebar-item:hover {
+            background: #1a1a1a;
+        }
+
+        .sidebar-item.active {
+            background: #1a1a1a;
+        }
+
+        .sidebar-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background: #00ff88;
+            border-radius: 0 3px 3px 0;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: #999;
+        }
+
+        .sidebar-item:hover .icon,
+        .sidebar-item.active .icon {
+            fill: #00ff88;
+        }
+
+        /* Workspace */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0f0f0f;
+            overflow: hidden;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background: #111;
+            border-bottom: 1px solid #222;
+            padding: 12px 24px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .toolbar-btn {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 255, 136, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toolbar-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .toolbar-btn:hover {
+            background: #00dd77;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background: #333;
+            margin: 0 8px;
+        }
+
+        /* Artboard */
+        .artboard-container {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .artboard {
+            background: #fafafa;
+            width: 100%;
+            max-width: 900px;
+            min-height: 1100px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            padding: 48px;
+            color: #000;
+        }
+
+        /* Content Blocks */
+        .block {
+            background: #fff;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            position: relative;
+            cursor: move;
+            transition: all 0.2s;
+        }
+
+        .block:hover {
+            border-color: #00ff88;
+            box-shadow: 0 4px 16px rgba(0, 255, 136, 0.1);
+        }
+
+        .block.selected {
+            border-color: #00ff88;
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+        }
+
+        .block-toolbar {
+            position: absolute;
+            top: -36px;
+            right: 0;
+            display: none;
+            gap: 4px;
+        }
+
+        .block:hover .block-toolbar,
+        .block.selected .block-toolbar {
+            display: flex;
+        }
+
+        .block-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .block-btn svg {
+            width: 12px;
+            height: 12px;
+            fill: #666;
+        }
+
+        .block-btn:hover {
+            background: #f5f5f5;
+            border-color: #00ff88;
+        }
+
+        .text-block {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        .math-block {
+            font-size: 18px;
+            text-align: center;
+            padding: 24px;
+            color: #333;
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 4px;
+        }
+
+        .numerator {
+            border-bottom: 2px solid #333;
+            padding-bottom: 2px;
+        }
+
+        .denominator {
+            padding-top: 2px;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            width: 280px;
+            background: #111;
+            border-left: 1px solid #222;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .panel-section {
+            margin-bottom: 24px;
+        }
+
+        .panel-label {
+            font-size: 13px;
+            color: #ccc;
+            margin-bottom: 8px;
+        }
+
+        .panel-input {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .panel-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .panel-select {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .color-preview {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 48px 24px;
+        }
+
+        .empty-state-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                    PDFy
+                </div>
+                <nav class="nav-menu">
+                    <a class="nav-item active">Dashboard</a>
+                    <a class="nav-item">Projects</a>
+                    <a class="nav-item">Templates</a>
+                    <a class="nav-item">Community</a>
+                </nav>
+            </div>
+            <div class="header-actions">
+                <button class="btn" onclick="alert('Import Chat - Coming Soon')">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
+                    </svg>
+                    Import Chat
+                </button>
+                <button class="btn" onclick="alert('Save Project - Coming Soon')">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+                    </svg>
+                    Save Project
+                </button>
+                <button class="btn btn-primary" onclick="alert('Export PDF - Coming Soon')">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                    Export PDF
+                </button>
+                <div class="user-profile" onclick="alert('Profile Menu - Coming Soon')">
+                    <div class="avatar-container">
+                        <div class="user-avatar">JD</div>
+                        <div class="status-dot"></div>
+                    </div>
+                    <span class="user-name">John Doe</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-item active" title="Home">
+                    <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                </div>
+                <div class="sidebar-item" title="Projects">
+                    <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+                    </svg>
+                </div>
+                <div class="sidebar-item" title="Templates">
+                    <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                    </svg>
+                </div>
+                <div class="sidebar-item" title="Settings" style="margin-top: auto;">
+                    <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Workspace -->
+            <div class="workspace">
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <button class="toolbar-btn" onclick="alert('Add Text Block')">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 4v3h5.5v12h3V7H19V4z"/>
+                        </svg>
+                        Text
+                    </button>
+                    <button class="toolbar-btn" onclick="alert('Add Code Block')">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                        </svg>
+                        Code
+                    </button>
+                    <button class="toolbar-btn" onclick="alert('Add Math Block')">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5.97 4.06L14.09 6l1.41 1.41L16.91 6l1.06 1.06-1.41 1.41 1.41 1.41-1.06 1.06-1.41-1.4-1.41 1.41-1.06-1.06 1.41-1.41-1.42-1.42zM7.25 7h1.5v1.5h-1.5V7zm0 2.5h1.5V11h-1.5V9.5zm2.5 2.5H8.5v-1.25H7.25V10h1.25V8.75h1.25V10h1.25v1.25H9.75V12zm-2.5 1.5h1.5v1.5h-1.5V13zm6.72 3h-7.5v-1.5h7.5V16z"/>
+                        </svg>
+                        Math
+                    </button>
+                    <button class="toolbar-btn" onclick="alert('Add Image Block')">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                        </svg>
+                        Image
+                    </button>
+                    <div class="toolbar-divider"></div>
+                    <button class="toolbar-btn" onclick="alert('Undo')">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/>
+                        </svg>
+                        Undo
+                    </button>
+                    <button class="toolbar-btn" onclick="alert('Redo')">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/>
+                        </svg>
+                        Redo
+                    </button>
+                    <div class="toolbar-divider"></div>
+                    <button class="toolbar-btn" onclick="alert('Clear All')">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Clear All
+                    </button>
+                </div>
+
+                <!-- Artboard -->
+                <div class="artboard-container">
+                    <div class="artboard">
+                        <!-- Text Block -->
+                        <div class="block" onclick="selectBlock(this)">
+                            <div class="block-toolbar">
+                                <button class="block-btn" onclick="alert('Duplicate Block')">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                                    </svg>
+                                    Copy
+                                </button>
+                                <button class="block-btn" onclick="alert('Delete Block')">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                    </svg>
+                                    Delete
+                                </button>
+                            </div>
+                            <div class="text-block" contenteditable="true">
+                                <h2 style="margin-bottom: 12px; color: #111;">Welcome to PDFy</h2>
+                                <p>This is a sample text block. You can edit this content directly by clicking on it. PDFy helps you convert chat conversations into beautifully formatted PDF documents with support for code, math equations, and rich text formatting.</p>
+                            </div>
+                        </div>
+
+                        <!-- Code Block -->
+                        <div class="block" onclick="selectBlock(this)">
+                            <div class="block-toolbar">
+                                <button class="block-btn" onclick="alert('Duplicate Block')">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                                    </svg>
+                                    Copy
+                                </button>
+                                <button class="block-btn" onclick="alert('Delete Block')">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                    </svg>
+                                    Delete
+                                </button>
+                            </div>
+                            <div class="code-block" contenteditable="true">
+<span style="color: #569cd6;">function</span> <span style="color: #dcdcaa;">convertToPDF</span>() {
+    <span style="color: #569cd6;">const</span> <span style="color: #9cdcfe;">content</span> = document.<span style="color: #dcdcaa;">getElementById</span>(<span style="color: #ce9178;">'artboard'</span>);
+<span style="color: #569cd6;">return</span> <span style="color: #dcdcaa;">generatePDF</span>(content);
+}</div>
+</div>
+
+<!-- Math Block -->
+                    <div class="block" onclick="selectBlock(this)">
+                        <div class="block-toolbar">
+                            <button class="block-btn" onclick="alert('Duplicate Block')">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                                </svg>
+                                Copy
+                            </button>
+                            <button class="block-btn" onclick="alert('Delete Block')">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                </svg>
+                                Delete
+                            </button>
+                        </div>
+                        <div class="math-block" contenteditable="true">
+                            <p style="margin-bottom: 8px;">Pythagorean Theorem:</p>
+                            <div style="font-size: 24px; margin: 16px 0;">
+                                <span style="font-style: italic;">a</span><sup>2</sup> + <span style="font-style: italic;">b</span><sup>2</sup> = <span style="font-style: italic;">c</span><sup>2</sup>
+                            </div>
+                            <p style="margin-top: 16px;">Quadratic Formula:</p>
+                            <div style="font-size: 22px; margin-top: 12px;">
+                                <span style="font-style: italic;">x</span> = 
+                                <span class="fraction">
+                                    <span class="numerator">-<span style="font-style: italic;">b</span> ± √(<span style="font-style: italic;">b</span><sup>2</sup> - 4<span style="font-style: italic;">ac</span>)</span>
+                                    <span class="denominator">2<span style="font-style: italic;">a</span></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div class="panel-title">Properties</div>
+            
+            <div id="block-properties">
+                <div class="panel-section">
+                    <div class="panel-label">Font Family</div>
+                    <select class="panel-select">
+                        <option>Inter</option>
+                        <option>Roboto</option>
+                        <option>Poppins</option>
+                        <option>Courier New</option>
+                    </select>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-label">Font Size</div>
+                    <input type="number" class="panel-input" value="16" min="8" max="72">
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-label">Text Color</div>
+                    <div class="color-picker-wrapper">
+                        <div class="color-preview" style="background: #333333;"></div>
+                        <input type="text" class="panel-input" value="#333333" style="flex: 1;">
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-label">Alignment</div>
+                    <select class="panel-select">
+                        <option>Left</option>
+                        <option>Center</option>
+                        <option>Right</option>
+                        <option>Justify</option>
+                    </select>
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-label">Line Height</div>
+                    <input type="number" class="panel-input" value="1.6" min="1" max="3" step="0.1">
+                </div>
+
+                <div class="panel-section">
+                    <div class="panel-label">Background</div>
+                    <div class="color-picker-wrapper">
+                        <div class="color-preview" style="background: #ffffff;"></div>
+                        <input type="text" class="panel-input" value="#ffffff" style="flex: 1;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="empty-state" style="display: none;">
+                <div class="empty-state-title">No Block Selected</div>
+                <div class="empty-state-text">Select a block to edit its properties</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function selectBlock(element) {
+        document.querySelectorAll('.block').forEach(block => {
+            block.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        event.stopPropagation();
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.block')) {
+            document.querySelectorAll('.block').forEach(block => {
+                block.classList.remove('selected');
+            });
+        }
+    });
+</script>
+
+
+</body>
+</html>

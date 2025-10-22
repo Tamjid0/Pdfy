@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.editor-placeholder {
+  @apply text-gray-500 overflow-hidden absolute top-0 left-0 right-0 bottom-0 p-4 pointer-events-none;
+}
+
+.editor-paragraph {
+  @apply mb-4;
+}

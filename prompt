@@ -1,0 +1,29 @@
+Hey Gemini 👋
+
+Let me explain my project idea before we start.
+
+I’m building a  web app that allows users to create professional PDF documents directly in the browser — things like resumes, reports, or formatted text documents, more improtantly publicly shared ai chat into pdf prevesing the format.
+
+The app has a toolbar with options such as:
+
+Add Text → lets users insert and edit text boxes.
+
+Add Math → allows inserting mathematical equations or symbols.
+
+Add Image → enables uploading and placing images inside the document area.
+
+There’s a main editor canvas where users can  edit, and format content.
+Everything will later be exportable to a PDF (but the backend for that will be added in the future).
+
+Currently, I have a demo folder that contains the HTML, CSS, and JavaScript version of the app — no frameworks, just plain code.
+
+Your job later will be to:
+
+Convert the demo (HTML version) into a React + TypeScript+tailwindcss app.
+
+Make sure the structure is clean, modular, and scalable.
+
+Focus only on the frontend for now — I’ll handle the backend later.
+
+For now, just confirm that you understand the project and the goal by replying:
+✅ “Got it, I understand the project and I’m ready to convert it.”
