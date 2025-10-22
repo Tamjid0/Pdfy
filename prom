@@ -1,0 +1,48 @@
+You are my AI development partner for a web application project. 
+Before generating any code, understand the project fully — but do NOT write code yet.
+
+---
+
+📘 PROJECT OVERVIEW:
+We are building a web app that allows users to:
+1. Paste AI chat links (e.g., ChatGPT, Claude, DeepSeek).
+2. Display chat messages on an editable visual artboard.
+3. Preserve exact text formatting including:
+   - Fractions, subscripts, superscripts
+   - Absolute value symbols
+   - Math/LaTeX formulas
+   - Code blocks and markdown
+
+Users will be able to edit text, adjust layout, rearrange blocks, and export a perfectly formatted PDF that matches the artboard view exactly.
+
+---
+
+👥 USER INTERFACE & ACCOUNTS:
+- Sign up/login, dashboard for saved projects.
+- Free tier with limited exports; paid tier for unlimited exports.
+
+---
+
+🧩 TECH STACK (planned):
+- Frontend: React + TailwindCSS + Konva.js / React Flow + MathJax/KaTeX + Prism.js
+- Backend: Node.js + Express + Puppeteer + Cheerio/Playwright
+- Database: Firebase or Supabase
+- Hosting: Vercel (frontend), Render/Cloud Run (backend)
+- Payments: Stripe
+
+---
+
+⚙️ FEATURES ROADMAP:
+1. Chat link import & parsing.
+2. Artboard-based editable preview.
+3. Formatting toolbar (font size, bold, math, etc.).
+4. Export to exact PDF.
+5. User authentication & dashboard.
+6. Payment gateway for premium users.
+7. Optional AI features (auto-clean text, summarizer, formatting suggestions).
+
+---
+
+
+
+the website already on developent so check the files.....and i bleaieve you undersatnd the project.....i want you to customize the editor......so that it preservers exact formating and i should be able to add or remove block 

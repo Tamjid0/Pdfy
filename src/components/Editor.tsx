@@ -1,42 +1,78 @@
+import React from 'react';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import type { EditorState } from 'lexical';
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { ListItemNode, ListNode } from '@lexical/list';
+import { CodeNode, CodeHighlightNode } from '@lexical/code';
+import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
+import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
+import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
+import { LineBreakNode } from 'lexical';
 
+// Lexical Theme (can be customized later)
 const theme = {
-  ltr: 'ltr',
-  rtl: 'rtl',
-  placeholder: 'editor-placeholder',
-  paragraph: 'editor-paragraph',
+  // Example: paragraph: "editor-paragraph"
 };
 
+// Lexical Editor Configuration
+const editorConfig = {
+  namespace: 'PDFyEditor',
+  theme,
+  onError(error: Error) {
+    console.error(error);
+  },
+  nodes: [
+    HeadingNode,
+    QuoteNode,
+    ListNode,
+    ListItemNode,
+    CodeNode,
+    CodeHighlightNode,
+    TableNode,
+    TableCellNode,
+    TableRowNode,
+    AutoLinkNode,
+    LinkNode,
+    HorizontalRuleNode,
+    LineBreakNode,
+  ],
+};
 
-function onError(error: Error) {
-  console.error(error);
+// OnChange handler for Lexical editor state
+function onChange(editorState: EditorState) {
+  editorState.read(() => {
+    // Read the editor state here
+    // const root = $getRoot();
+    // const selection = $getSelection();
+    // console.log(root, selection);
+  });
 }
 
-interface EditorProps {
-  onChange: (editorState: EditorState) => void;
-}
-
-const Editor: React.FC<EditorProps> = ({ onChange }) => {
-  const initialConfig = {
-    namespace: 'MyEditor',
-    theme,
-    onError,
-  };
-
+const Editor: React.FC = () => {
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <PlainTextPlugin
-        contentEditable={<ContentEditable />}
-        placeholder={<div>Enter some text...</div>}
-      />
-      <OnChangePlugin onChange={onChange} />
-      <HistoryPlugin />
-    </LexicalComposer>
+    <div className="flex-1 p-8 overflow-auto flex justify-center items-start">
+      <div className="bg-white w-full max-w-screen-md min-h-[1100px] rounded-lg shadow-xl p-12 text-black relative">
+        <LexicalComposer initialConfig={editorConfig}>
+          <PlainTextPlugin
+            contentEditable={<ContentEditable className="editor-content-editable outline-none min-h-[calc(1100px - 96px)]" />}
+            placeholder={<div className="editor-placeholder absolute top-12 left-12 right-12 pointer-events-none text-gray-400">Enter your text here...</div>}
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+          <HistoryPlugin />
+          <OnChangePlugin onChange={onChange} />
+        </LexicalComposer>
+      </div>
+    </div>
   );
 };
 

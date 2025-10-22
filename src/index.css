@@ -2,8 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+.editor-content-editable {
+  min-height: calc(1100px - 96px);
+  @apply outline-none;
+}
+
 .editor-placeholder {
-  @apply text-gray-500 overflow-hidden absolute top-0 left-0 right-0 bottom-0 p-4 pointer-events-none;
+  @apply text-gray-400 overflow-hidden absolute top-12 left-12 right-12 pointer-events-none;
 }
 
 .editor-paragraph {
