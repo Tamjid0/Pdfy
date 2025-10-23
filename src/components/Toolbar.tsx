@@ -3,9 +3,13 @@ import React, { useState } from 'react';
 interface ToolbarProps {
   onImportChat: (url: string) => void;
   onInsertMathNode: ((equation: string) => void) | null;
+  onInsertTextBlock: (() => void) | null;
+  onInsertCodeBlock: (() => void) | null;
+  onInsertImageBlock: ((src: string, altText: string) => void) | null;
+  onClearEditor: (() => void) | null;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ onImportChat, onInsertMathNode }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ onImportChat, onInsertMathNode, onInsertTextBlock, onInsertCodeBlock, onInsertImageBlock, onClearEditor }) => {
   const [chatLink, setChatLink] = useState('');
 
   const handleImport = () => {
@@ -18,6 +22,31 @@ const Toolbar: React.FC<ToolbarProps> = ({ onImportChat, onInsertMathNode }) => 
   const handleInsertMath = () => {
     if (onInsertMathNode) {
       onInsertMathNode('c = \pm\sqrt{a^2 + b^2}'); // Sample equation
+    }
+  };
+
+  const handleInsertText = () => {
+    if (onInsertTextBlock) {
+      onInsertTextBlock();
+    }
+  };
+
+  const handleInsertCode = () => {
+    if (onInsertCodeBlock) {
+      onInsertCodeBlock();
+    }
+  };
+
+  const handleInsertImage = () => {
+    if (onInsertImageBlock) {
+      // Placeholder image for now
+      onInsertImageBlock('https://via.placeholder.com/150', 'Placeholder Image');
+    }
+  };
+
+  const handleClearEditor = () => {
+    if (onClearEditor) {
+      onClearEditor();
     }
   };
 
@@ -40,13 +69,19 @@ const Toolbar: React.FC<ToolbarProps> = ({ onImportChat, onInsertMathNode }) => 
       <div className="w-px h-6 bg-gray-700 mx-2"></div>
 
       {/* Existing Toolbar Buttons from demo.html */}
-      <button className="bg-green-500 text-black px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-green-400 flex items-center gap-1">
+      <button
+        className="bg-green-500 text-black px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-green-400 flex items-center gap-1"
+        onClick={handleInsertText}
+      >
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 fill-current">
           <path d="M5 4v3h5.5v12h3V7H19V4z"/>
         </svg>
         Text
       </button>
-      <button className="bg-green-500 text-black px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-green-400 flex items-center gap-1">
+      <button
+        className="bg-green-500 text-black px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-green-400 flex items-center gap-1"
+        onClick={handleInsertCode}
+      >
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 fill-current">
           <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
         </svg>
@@ -60,7 +95,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ onImportChat, onInsertMathNode }) => 
         </svg>
         Math
       </button>
-      <button className="bg-green-500 text-black px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-green-400 flex items-center gap-1">
+      <button className="bg-green-500 text-black px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-green-400 flex items-center gap-1"
+        onClick={handleInsertImage}
+      >
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 fill-current">
           <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
         </svg>
@@ -80,7 +117,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ onImportChat, onInsertMathNode }) => 
         Redo
       </button>
       <div className="w-px h-6 bg-gray-700 mx-2"></div>
-      <button className="bg-red-500 text-white px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-red-400 flex items-center gap-1">
+      <button className="bg-red-500 text-white px-3 py-2 rounded-md text-sm font-semibold transition-all hover:bg-red-400 flex items-center gap-1"
+        onClick={handleClearEditor}
+      >
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 fill-current">
           <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
         </svg>
