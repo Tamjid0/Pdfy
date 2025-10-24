@@ -14,42 +14,62 @@ export async function scrapeChat(url) {
       timeout: 60000,
     });
 
-                console.log("Waiting for chat content to render...");
+    console.log("Waiting for chat content to render...");
+    await page.waitForSelector(".prose", { timeout: 120000 });
 
-            
+    // Optional: scroll to bottom to load long chats
+    await page.evaluate(async () => {
+      let lastHeight = 0;
+      while (document.body.scrollHeight > lastHeight) {
+        lastHeight = document.body.scrollHeight;
+        window.scrollTo(0, document.body.scrollHeight);
+        await new Promise(r => setTimeout(r, 1000));
+      }
+    });
 
-                // Wait explicitly for at least one conversation message appears
+    console.log("Extracting chat content...");
 
-                await page.waitForSelector('.prose', { timeout: 120000 });
+    const chatData = await page.evaluate(() => {
+      const messages = [];
+      const proseElements = document.querySelectorAll(".prose");
 
-            
+      proseElements.forEach(contentEl => {
+        const turn = contentEl.closest('div[data-testid^="conversation-turn-"]');
+        const authorEl = turn ? turn.querySelector(".font-semibold") : null;
+        const author = authorEl ? authorEl.innerText.trim() : "unknown";
+        let content = "";
 
-                console.log("Extracting chat content...");
-
-            
-
-                        const chatData = await page.evaluate(() => {\n      const messages = [];\n      const proseElements = document.querySelectorAll(\'.prose\');\n      \n      proseElements.forEach(contentEl => {\n        const turn = contentEl.closest(\'div[data-testid^=\"conversation-turn-\"]\');\n        const authorEl = turn ? turn.querySelector(\'.font-semibold\') : null;\n\n        const author =\n          authorEl ? authorEl.innerText.trim() : \'unknown\';\n        let content = \'\';\n\n        contentEl.childNodes.forEach(node => {\n          if (node.nodeType === Node.TEXT_NODE) {\n            content += node.textContent;\n          } else if (node.nodeType === Node.ELEMENT_NODE) {\n            if (node.tagName === \'STRONG\') {\n              content += `**${node.textContent}**`;\n            } else if (node.tagName === \'EM\') {\n              content += `*${node.textContent}*`;\n            } else if (node.tagName === \'CODE\') {\n              content += `\`${node.textContent}\``;\n            } else if (node.tagName === \'PRE\') {\n              content += `\\n\`\`\`\\n${node.querySelector(\'code\').textContent}\\n\`\`\`\\n`;\n            } else if (node.tagName === \'BR\') {\n              content += \'\\n\';\n            } else if (node.classList.contains(\'katex\')) {\n              const annotation = node.querySelector(\'annotation[encoding=\"application/x-tex\"]\');\n              if (annotation) {\n                content += `\\\\(${annotation.textContent}\\\\)`;\n              }\n            } else if (node.tagName === \'P\') {\n                content += node.textContent + \'\\n\';\n            } else if (node.tagName === \'HR\') {\n                content += \'---\\n\';\n            }\n          }\n        });\n\n        messages.push({ author, content: content.trim() });\n      });\n      \n      return messages;\n    });
-
-        
-
-            console.log(`Extracted ${chatData.length} messages.`);
-
-            await browser.close();
-
-            return chatData;
-
-          } catch (err) {
-
-            console.error("Scrape error:", err);
-
-            await browser.close();
-
-            throw err;
-
+        contentEl.childNodes.forEach(node => {
+          if (node.nodeType === Node.TEXT_NODE) {
+            content += node.textContent;
+          } else if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.tagName === "STRONG") content += `**${node.textContent}**`;
+            else if (node.tagName === "EM") content += `*${node.textContent}*`;
+            else if (node.tagName === "CODE") content += `\`${node.textContent}\``;
+            else if (node.tagName === "PRE")
+              content += `\n\`\`\`\n${node.querySelector("code")?.textContent || ""}\n\`\`\`\n`;
+            else if (node.tagName === "BR") content += "\n";
+            else if (node.classList.contains("katex")) {
+              const annotation = node.querySelector('annotation[encoding="application/x-tex"]');
+              if (annotation) content += `\\(${annotation.textContent}\\)`;
+            } else if (node.tagName === "P") content += node.textContent + "\n";
+            else if (node.tagName === "HR") content += "---\n";
           }
+        });
 
-        }
+        messages.push({ author, content: content.trim() });
+      });
 
-        
+      return messages;
+    });
 
-    
+    console.log(`Extracted ${chatData.length} messages.`);
+    return chatData;
+
+  } catch (err) {
+    console.error("Scrape error:", err);
+    throw err;
+  } finally {
+    await browser.close();
+  }
+}
