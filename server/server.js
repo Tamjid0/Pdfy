@@ -1,7 +1,9 @@
 import express from "express";
 import { scrapeChat } from "./scraper.js";
+import cors from 'cors';
 
 const app = express();
+app.use(cors());
 
 app.get("/scrape", async (req, res) => {
   const { url } = req.query;

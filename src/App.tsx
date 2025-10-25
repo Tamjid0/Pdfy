@@ -16,7 +16,7 @@ const App: React.FC = () => {
   const handleImportChat = async (url: string) => {
     console.log('Importing chat from:', url);
     try {
-      const response = await fetch(`http://localhost:3001/api/import-chat?url=${encodeURIComponent(url)}`);
+      const response = await fetch(`http://localhost:3001/scrape?url=${encodeURIComponent(url)}`);
       if (!response.ok) {
         throw new Error('Failed to import chat');
       }
@@ -27,25 +27,25 @@ const App: React.FC = () => {
     }
   };
 
-  const handleEditorInsertMathNode = (mathNodeInserter: (equation: string) => void) => {
+  const handleEditorInsertMathNode = React.useCallback((mathNodeInserter: (equation: string) => void) => {
     setInsertMathNode(() => mathNodeInserter);
-  };
+  }, []);
 
-  const handleEditorInsertTextBlock = (textBlockInserter: () => void) => {
+  const handleEditorInsertTextBlock = React.useCallback((textBlockInserter: () => void) => {
     setInsertTextBlock(() => textBlockInserter);
-  };
+  }, []);
 
-  const handleEditorInsertCodeBlock = (codeBlockInserter: () => void) => {
+  const handleEditorInsertCodeBlock = React.useCallback((codeBlockInserter: () => void) => {
     setInsertCodeBlock(() => codeBlockInserter);
-  };
+  }, []);
 
-  const handleEditorInsertImageBlock = (imageBlockInserter: (src: string, altText: string) => void) => {
+  const handleEditorInsertImageBlock = React.useCallback((imageBlockInserter: (src: string, altText: string) => void) => {
     setInsertImageBlock(() => imageBlockInserter);
-  };
+  }, []);
 
-  const handleEditorClear = (editorClearer: () => void) => {
+  const handleEditorClear = React.useCallback((editorClearer: () => void) => {
     setClearEditor(() => editorClearer);
-  };
+  }, []);
 
   return (
     <div className="flex flex-col h-screen bg-gray-950 text-white">

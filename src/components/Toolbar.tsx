@@ -13,6 +13,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ onImportChat, onInsertMathNode, onIns
   const [chatLink, setChatLink] = useState('');
 
   const handleImport = () => {
+    console.log('Importing chat with link:', chatLink);
     if (chatLink) {
       onImportChat(chatLink);
       setChatLink('');
@@ -57,7 +58,10 @@ const Toolbar: React.FC<ToolbarProps> = ({ onImportChat, onInsertMathNode, onIns
         placeholder="Paste ChatGPT or AI chat link here..."
         className="flex-1 bg-gray-700 border border-gray-600 text-white px-3 py-2 rounded-md text-sm focus:outline-none focus:border-green-500"
         value={chatLink}
-        onChange={(e) => setChatLink(e.target.value)}
+        onChange={(e) => {
+          console.log('Setting chat link to:', e.target.value);
+          setChatLink(e.target.value);
+        }}
       />
       <button
         className="bg-green-500 text-black px-4 py-2 rounded-md text-sm font-semibold transition-all hover:bg-green-400"

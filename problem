@@ -1,0 +1,7 @@
+Scrape the full HTML of the ChatGPT share page.
+
+Send that HTML to your frontend as-is.
+
+Render it inside a visual preview (artboard)
+
+my sracpeer is not working properly.....its shows only one word in frontend,....i want to change the editor page....scrapper which will scrap the full html of the chatgpt chat and render it on the artboard

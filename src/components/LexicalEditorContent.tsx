@@ -39,27 +39,19 @@ const LexicalEditorContent: React.FC<LexicalEditorContentProps> = ({ onInsertMat
 
   useEffect(() => {
     if (chatContentToInsert) {
+      console.log('chatContentToInsert received:', chatContentToInsert); // Debug log
       editor.update(() => {
         $getRoot().clear(); // Clear existing content
         const nodes = chatContentToInsert.map(item => {
-          if (item.type === 'user') {
-            const paragraphNode = $createParagraphNode();
-            paragraphNode.append($createTextNode(item.content));
-            return paragraphNode;
-          } else if (item.type === 'bot') {
-            // Simple check for code in the bot message
-            if (item.content.includes('`')) {
-              const codeNode = $createCodeNode('javascript');
-              codeNode.append($createTextNode(item.content.replace(/`/g, '')));
-              return codeNode;
-            } else {
-              const paragraphNode = $createParagraphNode();
-              paragraphNode.append($createTextNode(item.content));
-              return paragraphNode;
-            }
-          }
-          return null;
+          const paragraphNode = $createParagraphNode();
+          const authorNode = $createTextNode(`**${item.author}**: `);
+          authorNode.setFormat('bold');
+          const contentNode = $createTextNode(item.content);
+          paragraphNode.append(authorNode, contentNode);
+          return paragraphNode;
         }).filter(Boolean);
+
+        console.log('Nodes to append:', nodes); // Debug log
 
         if (nodes.length > 0) {
           $getRoot().append(...nodes);
@@ -68,40 +60,40 @@ const LexicalEditorContent: React.FC<LexicalEditorContentProps> = ({ onInsertMat
     }
   }, [chatContentToInsert, editor]);
 
-  const insertMathNode = (equation: string) => {
+  const insertMathNode = React.useCallback((equation: string) => {
     editor.update(() => {
       const mathNode = $createMathNode('', equation);
       $insertNodes([mathNode]);
     });
-  };
+  }, [editor]);
 
-  const insertTextBlock = () => {
+  const insertTextBlock = React.useCallback(() => {
     editor.update(() => {
       const paragraphNode = $createParagraphNode();
       $insertNodes([paragraphNode]);
     });
-  };
+  }, [editor]);
 
-  const insertCodeBlock = () => {
+  const insertCodeBlock = React.useCallback(() => {
     editor.update(() => {
       // For code blocks, we can insert a CodeNode, optionally with a default language
       const codeNode = $createCodeNode('javascript');
       $insertNodes([codeNode]);
     });
-  };
+  }, [editor]);
 
-  const insertImageBlock = (src: string, altText: string) => {
+  const insertImageBlock = React.useCallback((src: string, altText: string) => {
     editor.update(() => {
       const imageNode = $createImageNode(src, altText);
       $insertNodes([imageNode]);
     });
-  };
+  }, [editor]);
 
-  const clearEditor = () => {
+  const clearEditor = React.useCallback(() => {
     editor.update(() => {
       $getRoot().clear();
     });
-  };
+  }, [editor]);
 
   // Pass the insert functions to the parent (Editor)
   React.useEffect(() => {
@@ -110,7 +102,7 @@ const LexicalEditorContent: React.FC<LexicalEditorContentProps> = ({ onInsertMat
     onInsertCodeBlock(insertCodeBlock);
     onInsertImageBlock(insertImageBlock);
     onClearEditor(clearEditor);
-  }, [onInsertMathNode, onInsertTextBlock, onInsertCodeBlock, onInsertImageBlock, onClearEditor, insertMathNode, insertTextBlock, insertCodeBlock, insertImageBlock, clearEditor]);
+  }, [onInsertMathNode, onInsertTextBlock, onInsertCodeBlock, onInsertImageBlock, onClearEditor]);
 
   return (
     <div className="relative">
