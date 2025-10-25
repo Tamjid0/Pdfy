@@ -1,5 +1,5 @@
 import express from "express";
-import { scrapeChat } from "./scraper.js";
+import { scrapeHtml } from "./scraper.js";
 import cors from 'cors';
 
 const app = express();
@@ -10,8 +10,8 @@ app.get("/scrape", async (req, res) => {
   if (!url) return res.status(400).send("Missing URL");
 
   try {
-    const data = await scrapeChat(url);
-    res.json(data);
+    const htmlContent = await scrapeHtml(url);
+    res.json({ html: htmlContent });
   } catch (e) {
     res.status(500).send(e.message);
   }

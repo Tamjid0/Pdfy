@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import Editor from './components/Editor';
 import Toolbar from './components/Toolbar';
-import { useState } from 'react';
+import Artboard from './components/Artboard';
 
 const App: React.FC = () => {
   const [insertMathNode, setInsertMathNode] = useState<((equation: string) => void) | null>(null);
@@ -12,18 +12,20 @@ const App: React.FC = () => {
   const [insertImageBlock, setInsertImageBlock] = useState<((src: string, altText: string) => void) | null>(null);
   const [clearEditor, setClearEditor] = useState<(() => void) | null>(null);
   const [chatContentToInsert, setChatContentToInsert] = useState<any[] | null>(null);
+  const [htmlPreview, setHtmlPreview] = useState<string | null>(null);
 
-  const handleImportChat = async (url: string) => {
-    console.log('Importing chat from:', url);
+  const handleScrapeUrl = async (url: string) => {
+    console.log('Scraping URL:', url);
     try {
       const response = await fetch(`http://localhost:3001/scrape?url=${encodeURIComponent(url)}`);
       if (!response.ok) {
-        throw new Error('Failed to import chat');
+        throw new Error('Failed to scrape URL');
       }
-      const chatContent = await response.json();
-      setChatContentToInsert(chatContent);
+      const data = await response.json();
+      setHtmlPreview(data.html);
     } catch (error) {
-      console.error('Error importing chat:', error);
+      console.error('Error scraping URL:', error);
+      setHtmlPreview(null); // Clear preview on error
     }
   };
 
@@ -54,21 +56,24 @@ const App: React.FC = () => {
         <Sidebar />
         <div className="flex-1 flex flex-col">
           <Toolbar
-            onImportChat={handleImportChat}
+            onImportChat={handleScrapeUrl}
             onInsertMathNode={insertMathNode}
             onInsertTextBlock={insertTextBlock}
             onInsertCodeBlock={insertCodeBlock}
             onInsertImageBlock={insertImageBlock}
             onClearEditor={clearEditor}
           />
-          <Editor
-            onInsertMathNode={handleEditorInsertMathNode}
-            onInsertTextBlock={handleEditorInsertTextBlock}
-            onInsertCodeBlock={handleEditorInsertCodeBlock}
-            onInsertImageBlock={handleEditorInsertImageBlock}
-            onClearEditor={handleEditorClear}
-            chatContentToInsert={chatContentToInsert}
-          />
+          <div className="flex flex-1">
+            <Editor
+              onInsertMathNode={handleEditorInsertMathNode}
+              onInsertTextBlock={handleEditorInsertTextBlock}
+              onInsertCodeBlock={handleEditorInsertCodeBlock}
+              onInsertImageBlock={handleEditorInsertImageBlock}
+              onClearEditor={handleEditorClear}
+              chatContentToInsert={chatContentToInsert}
+            />
+            <Artboard htmlContent={htmlPreview} />
+          </div>
         </div>
       </div>
     </div>
