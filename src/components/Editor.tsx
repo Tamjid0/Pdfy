@@ -116,11 +116,15 @@ interface EditorProps {
 
 
 
-  onEditorChange: (html: string) => void;
+    onEditorChange: (html: string) => void;
 
 
 
-}
+    isEditorChange: boolean;
+
+
+
+  }
 
 
 
@@ -260,7 +264,7 @@ const editorConfig = {
 
 
 
-const Editor: React.FC<EditorProps> = ({ onInsertMathNode, onInsertTextBlock, onInsertCodeBlock, onInsertImageBlock, onClearEditor, chatContentToInsert, htmlContent, onEditorChange }) => {
+const Editor: React.FC<EditorProps> = ({ onInsertMathNode, onInsertTextBlock, onInsertCodeBlock, onInsertImageBlock, onClearEditor, chatContentToInsert, htmlContent, onEditorChange, isEditorChange }) => {
 
 
 
@@ -312,7 +316,7 @@ const Editor: React.FC<EditorProps> = ({ onInsertMathNode, onInsertTextBlock, on
 
 
 
-          <HtmlPlugin html={htmlContent} />
+          <HtmlPlugin html={htmlContent} isEditorChange={isEditorChange} />
 
 
 
@@ -408,7 +412,7 @@ const Editor: React.FC<EditorProps> = ({ onInsertMathNode, onInsertTextBlock, on
 
 
 
-function HtmlPlugin({ html }: { html: string | null }) {
+function HtmlPlugin({ html, isEditorChange }: { html: string | null; isEditorChange: boolean }) {
 
 
 
@@ -424,7 +428,7 @@ function HtmlPlugin({ html }: { html: string | null }) {
 
 
 
-    if (html) {
+    if (html && !isEditorChange) {
 
 
 
@@ -464,7 +468,7 @@ function HtmlPlugin({ html }: { html: string | null }) {
 
 
 
-  }, [html, editor]);
+  }, [html, editor, isEditorChange]);
 
 
 

@@ -7,15 +7,17 @@ interface ArtboardProps {
 const Artboard: React.FC<ArtboardProps> = ({ htmlContent }) => {
   if (!htmlContent) {
     return (
-      <div className="flex-1 p-4 bg-gray-900 text-gray-300 flex items-center justify-center">
-        No content to display. Scrape a URL to see the preview.
+      <div className="flex-1 p-8 overflow-auto flex justify-center items-start">
+        <div className="bg-white w-[794px] h-[1122px] rounded-lg shadow-xl p-12 text-gray-400 flex items-center justify-center">
+          No content to display. Scrape a URL to see the preview.
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 p-4 bg-gray-900 flex justify-center items-start">
-      <div className="w-[794px] h-[1122px] bg-white shadow-xl">
+    <div className="flex-1 p-8 overflow-auto flex justify-center items-start">
+      <div className="bg-white w-[794px] h-[1122px] rounded-lg shadow-xl p-12 text-black relative overflow-y-auto">
         <iframe
           srcDoc={htmlContent}
           sandbox="allow-same-origin allow-scripts"
