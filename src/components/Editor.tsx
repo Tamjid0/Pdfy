@@ -272,7 +272,7 @@ const Editor: React.FC<EditorProps> = ({ onInsertMathNode, onInsertTextBlock, on
 
 
 
-      <div className="bg-white w-full max-w-screen-md min-h-[1100px] rounded-lg shadow-xl p-12 text-black relative">
+      <div className="bg-white w-[794px] h-[1122px] rounded-lg shadow-xl p-12 text-black relative overflow-y-auto">
 
 
 
