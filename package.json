@@ -10,10 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@lexical/plain-text": "^0.37.0",
-    "@lexical/react": "^0.37.0",
+    "@lexical/html": "^0.38.2",
+    "@lexical/plain-text": "^0.38.2",
+    "@lexical/react": "^0.38.2",
     "katex": "^0.16.25",
-    "lexical": "^0.37.0",
+    "lexical": "^0.38.2",
     "lucide-react": "^0.546.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
